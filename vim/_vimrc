@@ -1,0 +1,115 @@
+" {{{ python链接库设置
+" set pythonthreedll=C:/Program\ Files/Python35/python35.dll
+set pythonthreedll=$ROOTPATH/Python35/python35.dll
+" set pythonthreedll=
+" set pythondll=$ROOTPATH/Python27/python27.dll
+" }}}
+
+" {{{ 判定当前操作系统类型
+if has("win32") || has("win32unix")
+    let g:OS#name = "win"
+    let g:OS#win = 1
+    let g:OS#mac = 0
+    let g:OS#unix = 0
+endif
+" }}}
+
+" {{{ 设置gui变量
+if has("gui_running")
+    let g:OS#gui = 1
+else
+    let g:OS#gui = 0
+endif
+" }}}
+
+" {{{设置用户路径
+if g:OS#win
+    " 取消Windows特性
+    " source $VIMRUNTIME/mswin.vim
+    " behave mswin
+    let $VIUMFILES = $VIM.'/vimfiles'
+endif
+" }}}
+
+" {{{ MyDiff
+if g:OS#win
+    set diffexpr=MyDiff()
+    function! MyDiff()
+        let opt = '-a --binary '
+        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+        let arg1 = v:fname_in
+        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+        let arg2 = v:fname_new
+        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+        let arg3 = v:fname_out
+        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+        let eq = ''
+        if $VIMRUNTIME =~ ' '
+            if &sh =~ '\<cmd'
+                let cmd = '""' . $VIMRUNTIME . '\diff"'
+                let eq = '"'
+            else
+                let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+            endif
+        else
+            let cmd = $VIMRUNTIME . '\diff'
+        endif
+        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
+    endfunction
+endif
+" }}}
+
+" {{{ 配置文件读取
+if g:OS#win
+    source $VIMRUNTIME/delmenu.vim
+    source $VIMRUNTIME/menu.vim
+    language messages zh_CN.utf-8
+endif
+if v:lang =~? '^\(zh\)\|\(ja\)\|\(ko\)'
+    set ambiwidth=double
+endif
+" }}}
+
+" {{{ 自定义命令
+function MyStartInfo()
+    let $PROJECT_ROOT=getcwd()
+    let $PATH=$PATH.';'.getcwd().'./include;'.getcwd().'./src/inclue;'
+    echo '初始化中...'
+endfunction
+command YCM :call MyStartInfo()
+" }}}
+
+" {{{ 配置文件读取
+" 插件配置文件
+source $VIM/user.vim
+source $VIM/plug.vim
+source $VIM/maps.vim
+" }}}
+
+" {{{ 关闭其他缓冲区
+command! BcloseOthers call <SID>BufCloseOthers()
+function! <SID>BufCloseOthers()
+    let l:currentBufNum   = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
+    for i in range(1,bufnr("$"))
+        if buflisted(i)
+            if i!=l:currentBufNum
+                execute("bdelete ".i)
+            endif
+        endif
+    endfor
+endfunction
+"}}}
+
+" {{{ 快捷打开cmd
+command! Cmd execute ":!start cmd \/k \"chcp 65001 && cls\""
+map <F1> :Cmd<cr>
+" }}}
+
+" {{{ 快速运行
+noremap <F5> <ESC>:!start cmd \/k  npm run build && exit<CR>
+" noremap <F6> <ESC>:!start cmd \/k chcp 65001 && cls && python main.py && pause && exit<CR>
+noremap <F6> <ESC>:AsyncRun python %<CR>
+set backupcopy=yes
+" }}}
