@@ -1,0 +1,64 @@
+﻿set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmode
+set number
+" set relativenumber
+set scrolloff=3
+set history=1000
+
+set <vim-surround>
+
+" built in search looks better
+" nnoremap / :action Find<CR>
+" but preserve ideavim search
+
+" nnoremap <Space>ga :action GotoAction<CR>
+
+" nnoremap <Space>sfp :action ShowFilePath<CR>
+" nnoremap <Space>spm :action ShowPopupMenu<CR>
+
+" 突出显示当前行列
+set cursorline
+set cursorcolumn
+
+
+
+let mapleader = ";"
+
+" 配置local leader
+let maplocalleader = ","
+
+" 快速关闭
+noremap <Leader>q <ESC>:q<CR>
+" 快速保存
+noremap <Leader>w <ESC>:w<CR>
+" 将<down> 映射为<C-N>
+inoremap <C-n> <Down>
+inoremap <C-p> <Up>
+inoremap <C-a> <Home>
+inoremap <C-e> <End>
+inoremap <C-d> <Delete>
+
+  
+noremap <leader>h :action Back<CR>  
+noremap <leader>l :action Forward<CR>  
+" noremap <leader>v :action VimVisualToggleBlockMode<CR>
+noremap <leader>fs :action FileStructurePopup<CR>  
+  
+nnoremap <leader>ga :action GotoAction<CR>  
+nnoremap <leader>gc :action GotoClass<CR>  
+nnoremap <leader>gd :action GotoDeclaration<CR>  
+nnoremap <leader>gi :action GotoImplementation<CR>  
+nnoremap <leader>gs :action GotoSuperMethod<CR>  
+nnoremap <leader>fm :action ReformatCode<CR>
+
+nnoremap <Tab> gt
+nnoremap <S-Tab> gT
+
+nnoremap <C-c> viw"+y
+
+
+" 取消响铃
+set vb t_vb=
