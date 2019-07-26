@@ -8,7 +8,6 @@ set number
 set scrolloff=3
 set history=1000
 
-set <vim-surround>
 
 " built in search looks better
 " nnoremap / :action Find<CR>
@@ -23,7 +22,13 @@ set <vim-surround>
 set cursorline
 set cursorcolumn
 
+" 高亮搜索
+set hls
 
+noremap <space>y "*y
+noremap <space>Y "*Y
+noremap <space>p "*p
+noremap <space>P "*P
 
 let mapleader = ";"
 
@@ -34,31 +39,70 @@ let maplocalleader = ","
 noremap <Leader>q <ESC>:q<CR>
 " 快速保存
 noremap <Leader>w <ESC>:w<CR>
-" 将<down> 映射为<C-N>
-inoremap <C-n> <Down>
-inoremap <C-p> <Up>
+
+
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
 inoremap <C-d> <Delete>
 
   
-noremap <leader>h :action Back<CR>  
-noremap <leader>l :action Forward<CR>  
+" noremap <c-h> :action Back<CR>  
+" noremap <c-l> :action Forward<CR>  
 " noremap <leader>v :action VimVisualToggleBlockMode<CR>
 noremap <leader>fs :action FileStructurePopup<CR>  
   
-nnoremap <leader>ga :action GotoAction<CR>  
-nnoremap <leader>gc :action GotoClass<CR>  
-nnoremap <leader>gd :action GotoDeclaration<CR>  
-nnoremap <leader>gi :action GotoImplementation<CR>  
-nnoremap <leader>gs :action GotoSuperMethod<CR>  
+nnoremap <leader>ga :action GotoAction<CR>
+nnoremap <leader>cc :action GotoClass<CR>
+nnoremap <leader>dd :action GotoDeclaration<CR>  
+ 
+nnoremap <leader>ss :action GotoSuperMethod<CR>
 nnoremap <leader>fm :action ReformatCode<CR>
+
+" 打开运行界面
+nnoremap <leader>rr :action ChooseRunConfiguration<CR>
+
+" 跳转实现
+nnoremap <leader>ii :action GotoImplementation<CR>
+
+" 查看调用
+nnoremap <leader>gi :action ShowUsages<CR>
+
+" 添加调试断点
+nnoremap <Leader>bb :action ToggleLineBreakpoint<CR>
+
+" 查看断点
+nnoremap <Leader>br :action ViewBreakpoints<CR>
+
+" 打开调试界面
+nnoremap <leader>gd :action ChooseRunConfiguration<CR>
+
+" 更新项目
+nnoremap <leader>uu :action Vcs.UpdateProject<CR>
+
+" 提交代码
+nnoremap <leader>c :action CheckinProject<CR>
+
+" 重构
+nnoremap <c-space> :action RenameElement<CR>zz
+
 
 nnoremap <Tab> gt
 nnoremap <S-Tab> gT
 
+nnoremap <C-j> gT
+" nnoremap <C-k> gt
+
 nnoremap <C-c> viw"+y
 
+set keep-english-in-normal-and-restore-in-insert
 
 " 取消响铃
 set vb t_vb=
+
+set surround
+
+set multiple-cursors
+
+" 保留5行预览
+
+set so=10
