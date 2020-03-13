@@ -46,8 +46,8 @@ inoremap <C-e> <End>
 inoremap <C-d> <Delete>
 
   
-" noremap <c-h> :action Back<CR>  
-" noremap <c-l> :action Forward<CR>  
+noremap <c-h> :action Back<CR>
+noremap <c-l> :action Forward<CR>
 " noremap <leader>v :action VimVisualToggleBlockMode<CR>
 noremap <leader>fs :action FileStructurePopup<CR>  
   
@@ -56,7 +56,7 @@ nnoremap <leader>cc :action GotoClass<CR>
 nnoremap <leader>dd :action GotoDeclaration<CR>  
  
 nnoremap <leader>ss :action GotoSuperMethod<CR>
-nnoremap <leader>fm :action ReformatCode<CR>
+nnoremap <c-space> :action ReformatCode<CR>
 
 " 打开运行界面
 nnoremap <leader>rr :action ChooseRunConfiguration<CR>
@@ -74,7 +74,7 @@ nnoremap <Leader>bb :action ToggleLineBreakpoint<CR>
 nnoremap <Leader>br :action ViewBreakpoints<CR>
 
 " 打开调试界面
-nnoremap <leader>gd :action ChooseRunConfiguration<CR>
+nnoremap <leader>gd :action ChooseDebugConfiguration<CR>
 
 " 更新项目
 nnoremap <leader>uu :action Vcs.UpdateProject<CR>
@@ -90,7 +90,7 @@ nnoremap <Tab> gt
 nnoremap <S-Tab> gT
 
 nnoremap <C-j> gT
-" nnoremap <C-k> gt
+nnoremap <C-k> gt
 
 nnoremap <C-c> viw"+y
 
@@ -106,3 +106,5 @@ set multiple-cursors
 " 保留5行预览
 
 set so=10
+
+set ideajoin
