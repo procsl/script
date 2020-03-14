@@ -16,7 +16,7 @@ SetWorkingDir %A_ScriptDir%
 
 ^[::CIM_SendKey()
 
-#space::Run "D:\Program Files\Terminal\open-wsl.exe" -l -B "-w full"
+#space::Run "C:\Users\procsl\wsl-terminal\wsl-terminal\open-wsl.exe" -l 
 
 CIM_SendKey()
 {

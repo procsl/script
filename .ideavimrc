@@ -106,3 +106,5 @@ set multiple-cursors
 " 保留5行预览
 
 set so=10
+
+set ideajoin
