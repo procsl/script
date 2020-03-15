@@ -15,8 +15,11 @@ set history=1000
 
 " nnoremap <Space>ga :action GotoAction<CR>
 
-" nnoremap <Space>sfp :action ShowFilePath<CR>
-" nnoremap <Space>spm :action ShowPopupMenu<CR>
+" 在资源管理器中显示文件
+nnoremap <Space>sfp :action ShowFilePath<CR>
+
+" 显示当前文件的菜单列表
+nnoremap <Space>spm :action ShowPopupMenu<CR>
 
 " 突出显示当前行列
 set cursorline
@@ -56,7 +59,7 @@ nnoremap <leader>cc :action GotoClass<CR>
 nnoremap <leader>dd :action GotoDeclaration<CR>  
  
 nnoremap <leader>ss :action GotoSuperMethod<CR>
-nnoremap <c-space> :action ReformatCode<CR>
+nnoremap <space> :action ReformatCode<CR>
 
 " 打开运行界面
 nnoremap <leader>rr :action ChooseRunConfiguration<CR>
