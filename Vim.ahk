@@ -18,7 +18,8 @@ SetWorkingDir %A_ScriptDir%
 
 ; ^c::CIM_SendKey_Ctrl_C()
 
-Capslock::Send {ESC}
+
+Capslock::Send_ESC()
 
 #space::Run "C:\Users\procsl\wsl-terminal\wsl-terminal\open-wsl.exe" -l 
 
@@ -43,6 +44,11 @@ ConvESC() {
 CtrlI() {
   send ^{Insert} ; 插入个ctr-insert可以有效的避免某些场景需两次才能切出中文的问题，实测
   Send {LCtrl Up}{RCtrl Down}{Space Down}{Space Up}{RCtrl Up}
+}
+
+Send_ESC(){
+	SetCapsLockState AlwaysOff
+	Send {Esc}
 }
 
 GetIME(WinTitle="") {
@@ -81,4 +87,12 @@ return
 
 Capslock & n::
 RunOrActivateProgram("notepad++.exe")
+return
+
+Capslock & o::
+RunOrActivateProgram("firefox.exe")
+return
+
+Capslock & s::
+RunOrActivateProgram("C:\Users\procsl\script\vim.ahk")
 return 
