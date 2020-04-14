@@ -1,7 +1,7 @@
 ﻿#NoEnv
 #WinActivateForce
 #SingleInstance, Force
-; #NoTrayIcon ; 状态栏图标, 按需注释
+#NoTrayIcon ; 状态栏图标, 按需注释
 ListLines, Off
 SendMode Input
 SetBatchLines -1
@@ -16,12 +16,22 @@ SetWorkingDir %A_ScriptDir%
 
 ^[::CIM_SendKey()
 
+; ^c::CIM_SendKey_Ctrl_C()
+
+Capslock::Send {ESC}
+
 #space::Run "C:\Users\procsl\wsl-terminal\wsl-terminal\open-wsl.exe" -l 
 
 CIM_SendKey()
 {
 	ConvESC()
 	Send {Esc}
+}
+
+CIM_SendKey_Ctrl_C()
+{
+	ConvESC()
+	SendInput {Raw}
 }
 
 ConvESC() {
@@ -45,3 +55,30 @@ GetIME(WinTitle="") {
 	DetectHiddenWindows,%DetectSave%
 	Return ErrorLevel
 }
+
+
+; 打开或者切换程序
+; Function to run a program or activate an already running instance 
+RunOrActivateProgram(Program, WorkingDir="", WindowSize=""){ 
+    SplitPath Program, ExeFile 
+    Process, Exist, %ExeFile% 
+    PID = %ErrorLevel% 
+    if (PID = 0) { 
+    Run, %Program%, %WorkingDir%, %WindowSize% 
+    }else{ 
+    WinActivate, ahk_pid %PID% 
+    } 
+}
+
+
+Capslock & j::
+RunOrActivateProgram("chrome.exe")
+return
+
+Capslock & i::
+RunOrActivateProgram("idea64.exe")
+return
+
+Capslock & n::
+RunOrActivateProgram("notepad++.exe")
+return 
