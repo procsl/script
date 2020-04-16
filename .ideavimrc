@@ -43,7 +43,6 @@ noremap <Leader>q <ESC>:q<CR>
 " 快速保存
 noremap <Leader>w <ESC>:w<CR>
 
-
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
 inoremap <C-d> <Delete>
@@ -87,7 +86,6 @@ nnoremap <leader>c :action CheckinProject<CR>
 
 " 重构
 nnoremap <c-space> :action RenameElement<CR>zz
-
 
 nnoremap <Tab> gt
 nnoremap <S-Tab> gT

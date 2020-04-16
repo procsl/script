@@ -48,7 +48,7 @@ CtrlI() {
 
 Send_ESC(){
 	SetCapsLockState AlwaysOff
-	Send {Esc}
+	CIM_SendKey()
 }
 
 GetIME(WinTitle="") {
@@ -70,29 +70,52 @@ RunOrActivateProgram(Program, WorkingDir="", WindowSize=""){
     Process, Exist, %ExeFile% 
     PID = %ErrorLevel% 
     if (PID = 0) { 
-    Run, %Program%, %WorkingDir%, %WindowSize% 
+		Run, %Program%, %WorkingDir%, %WindowSize% 
     }else{ 
-    WinActivate, ahk_pid %PID% 
+		WinActivate, ahk_pid %PID% 
     } 
 }
 
 
 Capslock & j::
+SetCapsLockState AlwaysOff
 RunOrActivateProgram("chrome.exe")
 return
 
 Capslock & i::
+SetCapsLockState AlwaysOff
 RunOrActivateProgram("idea64.exe")
 return
 
 Capslock & n::
+SetCapsLockState AlwaysOff
 RunOrActivateProgram("notepad++.exe")
 return
 
-Capslock & o::
+Capslock & f::
+SetCapsLockState AlwaysOff
 RunOrActivateProgram("firefox.exe")
 return
 
 Capslock & s::
-RunOrActivateProgram("C:\Users\procsl\script\vim.ahk")
-return 
+SetCapsLockState AlwaysOff
+Run "C:\Users\procsl\script\Vim.ahk"
+return
+
+
+Capslock & o::
+SetCapsLockState AlwaysOff
+RunOrActivateProgram("navicat.exe")
+return
+
+Capslock & q::
+SetCapsLockState AlwaysOff
+RunOrActivateProgram("idea64.exe")
+return
+
+
+; F12::
+;   WinGetActiveTitle, Title
+;   MsgBox, The active window is "%Title%".
+; return
+
