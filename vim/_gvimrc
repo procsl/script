@@ -1,0 +1,80 @@
+"vimrc by Anton Chen
+" Win平台下窗口全屏组件 gvimfullscreen.dll
+" Alt + Enter 全屏切换
+" <F11> 降低窗口透明度
+" <F12> 加大窗口透明度
+" <F10> 切换Vim是否总在最前面显示
+" Vim启动的时候自动使用当前颜色的背景色以去除Vim的白色边框
+" 2018年16点59分
+" {{{ Windows 全屏组件
+let g:MyVimLib = 'gvimfullscreen.dll'
+function! ToggleFullScreen()
+    call libcall(g:MyVimLib, 'ToggleFullScreen', 1)
+endfunction
+
+let g:VimAlpha = 245
+function! SetAlpha(alpha)
+    let g:VimAlpha = g:VimAlpha + a:alpha
+    if g:VimAlpha < 180
+        let g:VimAlpha = 180
+    endif
+    if g:VimAlpha > 255
+        let g:VimAlpha = 255
+    endif
+    call libcall(g:MyVimLib, 'SetAlpha', g:VimAlpha)
+endfunction
+
+let g:VimTopMost = 0
+function! SwitchVimTopMostMode()
+    if g:VimTopMost == 0
+        let g:VimTopMost = 1
+    else
+        let g:VimTopMost = 0
+    endif
+    call libcall(g:MyVimLib, 'EnableTopMost', g:VimTopMost)
+endfunction
+" 启动时设置透明度
+autocmd GUIEnter * call libcallnr(g:MyVimLib, 'SetAlpha', 255)
+" }}}
+"
+" {{{ 设置字体
+set guifont=Consolas_for_Powerline_FixedD:h12:cANSI:qDRAFT
+set gfw=幼圆:h12:cGB2312
+" 界面启动信息
+" set shortmess=atI
+" 使用windows directx 渲染
+set rop=type:directx,renmode:5
+" }}}
+"
+" {{{ 菜单栏配置
+set langmenu=zh_CN.UTF-8
+source $VIMRUNTIME/delmenu.vim    "导入删除菜单脚本，删除乱码的菜单
+source $VIMRUNTIME/menu.vim          "导入正常的菜单脚本
+" 菜单乱码解决方案
+" 隐藏菜单栏
+set guioptions-=m
+" 隐藏工具栏
+set guioptions-=T
+" 隐藏左侧滚动条
+set guioptions-=L
+" 隐藏右侧滚动条
+set guioptions-=r
+" 隐藏底部滚动条
+set guioptions-=b
+" 隐藏Tab栏
+set showtabline=0
+" }}}
+"
+"{{{ 默认窗口位置和大小
+winpos 235 235
+set lines=25 columns=108
+" }}}
+"
+" {{{ 自动全屏
+" autocmd GUIEnter * :call libcallnr("gvimfullscreen_64.dll", "ToggleFullScreen", 0)
+" }}}
+"
+" {{{
+source $VIM/gmaps.vim
+" }}}
+"

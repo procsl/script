@@ -1,0 +1,131 @@
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmode
+set number
+" set relativenumber
+set scrolloff=3
+set history=1000
+
+
+" built in search looks better
+" nnoremap / :action Find<CR>
+" but preserve ideavim search
+
+" nnoremap <Space>ga :action GotoAction<CR>
+
+" 在资源管理器中显示文件
+nnoremap <Space>sfp :action ShowFilePath<CR>
+
+" 显示当前文件的菜单列表
+nnoremap <Space>spm :action ShowPopupMenu<CR>
+
+
+" 高亮搜索
+set hls
+
+noremap <space>y "*y
+noremap <space>Y "*Y
+noremap <space>p "*p
+noremap <space>P "*P
+
+let mapleader = ";"
+
+" 配置local leader
+let maplocalleader = ","
+
+" 快速关闭
+noremap <Leader>q <ESC>:q<CR>
+" 快速保存
+noremap <Leader>w <ESC>:w<CR>
+
+inoremap <C-a> <Home>
+inoremap <C-e> <End>
+inoremap <C-d> <Delete>
+
+  
+noremap <c-h> :action Back<CR>
+noremap <c-l> :action Forward<CR>
+" noremap <leader>v :action VimVisualToggleBlockMode<CR>
+noremap <leader>fs :action FileStructurePopup<CR>  
+  
+nnoremap <leader>ga :action GotoAction<CR>
+nnoremap <leader>cc :action GotoClass<CR>
+nnoremap <leader>dd :action GotoDeclaration<CR>  
+ 
+nnoremap <leader>ss :action GotoSuperMethod<CR>
+nnoremap <space> :action ReformatCode<CR>
+
+" 打开运行界面
+nnoremap <leader>rr :action ChooseRunConfiguration<CR>
+
+" 跳转实现
+nnoremap <leader>ii :action GotoImplementation<CR>
+
+" 查看调用
+nnoremap <leader>gi :action ShowUsages<CR>
+
+" 添加调试断点
+nnoremap <Leader>bb :action ToggleLineBreakpoint<CR>
+
+" 查看断点
+nnoremap <Leader>br :action ViewBreakpoints<CR>
+
+" 打开调试界面
+nnoremap <leader>gd :action ChooseDebugConfiguration<CR>
+
+" 更新项目
+nnoremap <leader>uu :action Vcs.UpdateProject<CR>
+
+" 提交代码
+nnoremap <leader>c :action CheckinProject<CR>
+
+" 重构
+nnoremap <c-space> :action RenameElement<CR>zz
+
+nnoremap <Tab> gt
+nnoremap <S-Tab> gT
+
+nnoremap <C-j> gT
+nnoremap <C-k> gt
+
+nnoremap <C-c> viw"+y
+
+set surround
+
+set multiple-cursors
+
+" 保留5行预览
+
+set so=10
+
+
+Plug 'easymotion/vim-easymotion'
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-surround'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-commentary'
+Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'vim-scripts/argtextobj.vim'
+Plug 'tommcdo/vim-exchange'
+Plug 'kana/vim-textobj-entire'
+
+
+set ideajoin
+set NERDTree
+set surround
+set commentary
+set ReplaceWithRegister
+set argtextobj
+set exchange
+set textobj-entire
+set highlightedyank
+set vim-paragraph-motion
+<<<<<<< HEAD
+set vb t_vb=
+
+=======
+
+set noeb
+set vb t_vb=
