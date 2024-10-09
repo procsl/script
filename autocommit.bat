@@ -1,7 +1,7 @@
 chcp 65001
 
 
-set/p a= 'Netstat -ano |findStr 127.0.0.1:6666'
+set a='Netstat -ano |findStr 127.0.0.1:6666'
 
 if exist "%a%" (
     echo File "%a%" found.
