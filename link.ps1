@@ -20,9 +20,16 @@ if ($adb_output.Contains("f8061b9")) {
         adb forward tcp:8888 tcp:8888
     }
 
+    if (-not $adb_list.Contains("8889")){
+        adb forward tcp:8889 tcp:8889
+    }
    
     if (-not $adb_list.Contains("8022")){
         adb forward tcp:8022 tcp:8022
+    }
+	
+	if (-not $adb_list.Contains("6666")){
+        adb forward tcp:6666 tcp:6666
     }
     
 }
