@@ -1,5 +1,10 @@
 $port_output = Netstat -ano |findStr 127.0.0.1:6666
 
+if ($port_output -eq $null)
+{
+    $port_output = 'aaa'
+}
+
 if ( $port_output.Contains("LISTENING"))
 {
     Write-Host "Port listening... use proxy port"
