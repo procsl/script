@@ -1,3 +1,4 @@
+Set-Location -Path "C:\Users\procsl\IdeaProjects\script\"
 $port_output = Netstat -ano |findStr 127.0.0.1:6666
 
 if ($null -eq $port_output)
