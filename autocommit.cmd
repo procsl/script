@@ -1,1 +1,1 @@
-powershell .\autocommit.ps1
+powershell C:\Users\procsl\IdeaProjects\script\autocommit.ps1
