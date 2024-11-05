@@ -1,0 +1,1 @@
+powershell "C:\Users\procsl\IdeaProjects\script\wsa proxy close.ps1"
