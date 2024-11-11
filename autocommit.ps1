@@ -10,7 +10,7 @@ if ($null -eq $port_output)
 if ($port_output.Contains("LISTENING"))
 {
     Write-Host "Port listening... use proxy port"
-    git config http.proxy http://procsl:asdfghjkl@www.procsl.cn:7777
+    git config http.proxy http://procsl:asdfghjkl@www.procsl.cn:6666
 }
 
 git add  .
