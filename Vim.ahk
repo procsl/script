@@ -104,11 +104,6 @@ SetCapsLockState AlwaysOff
 Run "C:\Users\procsl\script\Vim.ahk"
 return
 
-Capslock & o::
-SetCapsLockState AlwaysOff
-RunOrActivateProgram("msedge.exe")
-return
-
 
 
 Ctrl & [::

@@ -57,3 +57,8 @@ if (-not $adb_list.Contains("7777"))
 {
     db -s f8061b9  forward tcp:7777 tcp:7777
 }
+
+if (-not $adb_list.Contains("7778"))
+{
+    db -s f8061b9  forward tcp:7778 tcp:7778
+}
