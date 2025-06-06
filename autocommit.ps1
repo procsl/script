@@ -1,5 +1,5 @@
 Set-Location -Path "C:\Users\procsl\IdeaProjects\script\"
-$port_output = Netstat -ano |findStr 127.0.0.1:8889
+$port_output = Netstat -ano |findStr LISTENING |findStr 127.0.0.1:8889
 Write-Host "start set proxy: $port_output"
 if ($null -eq $port_output)
 {
