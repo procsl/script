@@ -1,5 +1,5 @@
 Set-Location -Path "C:\Users\procsl\IdeaProjects\script\"
-$port_output = Netstat -ano |findStr LISTENING |findStr 127.0.0.1:8889
+$port_output = Netstat -ano |findStr LISTENING |findStr 127.0.0.1:6666
 Write-Host "start set proxy: $port_output"
 if ($null -eq $port_output)
 {
@@ -10,7 +10,7 @@ if ($null -eq $port_output)
 if ($port_output.Contains("LISTENING"))
 {
     Write-Host "Port listening... use proxy port"
-    git config http.proxy https://procsl:asdfghjkl@www.procsl.cn:8889
+    git config http.proxy http://procsl:asdfghjkl@www.procsl.cn:6666
 }
 
 Write-Host "end set proxy"
