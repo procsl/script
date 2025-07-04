@@ -1,0 +1,1 @@
+powershell C:\Users\procsl\IdeaProjects\script\au.ps1
