@@ -99,10 +99,6 @@ SetCapsLockState AlwaysOff
 RunOrActivateProgram("firefox.exe")
 return
 
-Capslock & s::
-SetCapsLockState AlwaysOff
-Run "C:\Users\procsl\script\Vim.ahk"
-return
 
 
 
