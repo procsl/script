@@ -5,6 +5,7 @@ import logging
 import os
 import subprocess
 import sys
+import ctypes
 import time
 from bleak import BleakScanner
 
@@ -45,6 +46,41 @@ logging.info(f"server started: | dev: {TARGET_INTERFACE}")
 
 LAST_EXEC_TIME = 0
 CURRENT_STATE = None
+# Windows API 状态常量定义
+ES_CONTINUOUS = 0x80000000
+ES_SYSTEM_REQUIRED = 0x00000001
+ES_DISPLAY_REQUIRED = 0x00000002
+
+def wake_up_hardware():
+    """
+    强制唤醒硬件供电与系统：
+    1. 阻止系统继续低功耗休眠，拉高 CPU/主板状态。
+    2. 模拟底层 F15 按键，让 Windows 退出 Modern Standby 并恢复 USB/网卡供电。
+    """
+    try:
+        # 请求系统和显示器保持工作状态
+        ctypes.windll.kernel32.SetThreadExecutionState(
+            ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED
+        )
+        # 发送底层按键事件 (F15 键，对用户无影响但能触发硬件唤醒)
+        ctypes.windll.user32.keybd_event(0x7E, 0, 0, 0)
+        time.sleep(0.05)
+        ctypes.windll.user32.keybd_event(0x7E, 0, 2, 0)
+        logging.info("[wake] 已触发硬件唤醒，恢复 USB/网卡供电")
+    except Exception as e:
+        logging.error(f"[wake: error] 唤醒硬件失败: {e}")
+
+def allow_sleep_again():
+    """
+    恢复系统默认的睡眠策略（可选使用）
+    """
+    try:
+        ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
+        logging.info("[wake] 已恢复系统电源策略")
+    except Exception as e:
+        logging.error(f"[wake: error] 恢复电源策略失败: {e}")
+
+
 
 def control_interface(action: str):
     global LAST_EXEC_TIME, CURRENT_STATE
@@ -59,6 +95,10 @@ def control_interface(action: str):
         logging.info(f"[skip] dev '{TARGET_INTERFACE}' current {target_status} status")
         return
 
+    # =====【修改点 1】：在执行 netsh 命令前，先唤醒系统和恢复 USB 供电 =====
+    wake_up_hardware()
+    time.sleep(1)  # 给网卡/USB 控制器 1 秒钟通电初始化的时间
+
     try:
         subprocess.run(
             ['netsh', 'interface', 'set', 'interface', TARGET_INTERFACE, target_status],
@@ -70,6 +110,11 @@ def control_interface(action: str):
         LAST_EXEC_TIME = now
         CURRENT_STATE = target_status
         logging.info(f"[ctr: ok ] dev '{TARGET_INTERFACE}' change to {target_status}")
+        
+        # =====【修改点 2】：如果是启用网卡，额外等待 3 秒供网卡寻找并连接网络 =====
+        if action == 'start':
+            time.sleep(3)
+            
     except subprocess.CalledProcessError as e:
         logging.error(f"[ctr: warn] {e.stderr.strip() if e.stderr else e}")
     except Exception as e:
