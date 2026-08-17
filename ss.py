@@ -23,7 +23,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 SECRET_KEY = args.key
-TARGET_INTERFACE = args.interface
+TARGET_INTERFACE = args.interface.strip() if args.interface else ""
 LOG_PATH = args.log
 TARGET_COMPANY_ID = 0xFFFF
 
@@ -80,10 +80,45 @@ def allow_sleep_again():
     except Exception as e:
         logging.error(f"[wake: error] 恢复电源策略失败: {e}")
 
+def get_nic_admin_status(nic_name: str) -> str:
+    cmd = [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        f"(Get-WmiObject Win32_NetworkAdapter | Where-Object NetConnectionID -eq '{nic_name}').NetEnabled"
+    ]
+
+    try:
+        logging.info("开始获取网卡状态")
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            startupinfo=startupinfo,
+            check=True
+        )
+
+        output = result.stdout.strip()
+        logging.info(f"获取网卡状态: {output}")
+
+        if output == "True":
+            return "enabled"
+        elif output == "False":
+            return "disabled"
+        else:
+            return "not found"
+
+    except Exception as e:
+        return f"error: {str(e)}"
 
 
 def control_interface(action: str):
-    global LAST_EXEC_TIME, CURRENT_STATE
+    global LAST_EXEC_TIME
+    CURRENT_STATE = get_nic_admin_status(TARGET_INTERFACE)
+    
     
     now = time.time()
     if now - LAST_EXEC_TIME < 5:
@@ -95,11 +130,12 @@ def control_interface(action: str):
         logging.info(f"[skip] dev '{TARGET_INTERFACE}' current {target_status} status")
         return
 
-    # =====【修改点 1】：在执行 netsh 命令前，先唤醒系统和恢复 USB 供电 =====
+
     wake_up_hardware()
-    time.sleep(1)  # 给网卡/USB 控制器 1 秒钟通电初始化的时间
+    time.sleep(1)
 
     try:
+        logging.info("开始设置网卡状态: {target_status}")
         subprocess.run(
             ['netsh', 'interface', 'set', 'interface', TARGET_INTERFACE, target_status],
             check=True,
@@ -108,10 +144,8 @@ def control_interface(action: str):
             encoding='gbk'
         )
         LAST_EXEC_TIME = now
-        CURRENT_STATE = target_status
         logging.info(f"[ctr: ok ] dev '{TARGET_INTERFACE}' change to {target_status}")
         
-        # =====【修改点 2】：如果是启用网卡，额外等待 3 秒供网卡寻找并连接网络 =====
         if action == 'start':
             time.sleep(3)
             
@@ -119,6 +153,7 @@ def control_interface(action: str):
         logging.error(f"[ctr: warn] {e.stderr.strip() if e.stderr else e}")
     except Exception as e:
         logging.error(f"[ctr: error] {e}")
+    logging.info("设置网卡状态结束: {target_status}")
 
 def verify_and_parse(raw_bytes):
     try:
