@@ -36,11 +36,6 @@ logging.basicConfig(
     encoding='utf-8'
 )
 
-
-# console_handler = logging.StreamHandler()
-# console_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
-# logging.getLogger().addHandler(console_handler)
-
 logging.info(f"server started: | dev: {TARGET_INTERFACE}")
 
 
@@ -51,18 +46,14 @@ ES_CONTINUOUS = 0x80000000
 ES_SYSTEM_REQUIRED = 0x00000001
 ES_DISPLAY_REQUIRED = 0x00000002
 
+# 用于主循环的事件驱动挂起，彻底告别 while + sleep 轮询
+shutdown_event = asyncio.Event()
+
 def wake_up_hardware():
-    """
-    强制唤醒硬件供电与系统：
-    1. 阻止系统继续低功耗休眠，拉高 CPU/主板状态。
-    2. 模拟底层 F15 按键，让 Windows 退出 Modern Standby 并恢复 USB/网卡供电。
-    """
     try:
-        # 请求系统和显示器保持工作状态
         ctypes.windll.kernel32.SetThreadExecutionState(
             ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED
         )
-        # 发送底层按键事件 (F15 键，对用户无影响但能触发硬件唤醒)
         ctypes.windll.user32.keybd_event(0x7E, 0, 0, 0)
         time.sleep(0.05)
         ctypes.windll.user32.keybd_event(0x7E, 0, 2, 0)
@@ -71,9 +62,6 @@ def wake_up_hardware():
         logging.error(f"[wake: error] 唤醒硬件失败: {e}")
 
 def allow_sleep_again():
-    """
-    恢复系统默认的睡眠策略（可选使用）
-    """
     try:
         ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
         logging.info("[wake] 已恢复系统电源策略")
@@ -89,7 +77,6 @@ def get_nic_admin_status(nic_name: str) -> str:
     ]
 
     try:
-        logging.info("开始获取网卡状态")
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
@@ -102,15 +89,12 @@ def get_nic_admin_status(nic_name: str) -> str:
         )
 
         output = result.stdout.strip()
-        logging.info(f"获取网卡状态: {output}")
-
         if output == "True":
             return "enabled"
         elif output == "False":
             return "disabled"
         else:
             return "not found"
-
     except Exception as e:
         return f"error: {str(e)}"
 
@@ -118,7 +102,6 @@ def get_nic_admin_status(nic_name: str) -> str:
 def control_interface(action: str):
     global LAST_EXEC_TIME
     CURRENT_STATE = get_nic_admin_status(TARGET_INTERFACE)
-    
     
     now = time.time()
     if now - LAST_EXEC_TIME < 5:
@@ -130,12 +113,12 @@ def control_interface(action: str):
         logging.info(f"[skip] dev '{TARGET_INTERFACE}' current {target_status} status")
         return
 
-
     wake_up_hardware()
     time.sleep(1)
 
     try:
-        logging.info("开始设置网卡状态: {target_status}")
+        # 修复了原代码中漏掉 f 前缀的 Bug
+        logging.info(f"开始设置网卡状态: {target_status}")
         subprocess.run(
             ['netsh', 'interface', 'set', 'interface', TARGET_INTERFACE, target_status],
             check=True,
@@ -153,7 +136,8 @@ def control_interface(action: str):
         logging.error(f"[ctr: warn] {e.stderr.strip() if e.stderr else e}")
     except Exception as e:
         logging.error(f"[ctr: error] {e}")
-    logging.info("设置网卡状态结束: {target_status}")
+    
+    logging.info(f"设置网卡状态结束: {target_status}")
 
 def verify_and_parse(raw_bytes):
     try:
@@ -192,24 +176,30 @@ def detection_callback(device, advertisement_data):
         
         if payload:
             logging.info(f"[ok] payload: {payload} | address: {device.address}")
-            
             cmd = payload.lower()
             if cmd in ('start', 'stop'):
                 control_interface(cmd)
         else:
-            logging.warning(f"[warning] {status}")
+            pass
 
 async def main():
-    logging.info("BLE listen ...")
-    scanner = BleakScanner(detection_callback)
+    logging.info("BLE listen (event-driven & passive mode) ...")
+    
+    # 1. 使用被动扫描 (scanning_mode="passive") 降低蓝牙控制器和射频唤醒开销
+    scanner = BleakScanner(detection_callback, scanning_mode="passive")
+    
     await scanner.start()
     try:
-        while True:
-            await asyncio.sleep(1)
+        # 2. 纯事件驱动挂起：不再有 while + sleep(2) 空转，CPU 占用直接归零
+        await shutdown_event.wait()
     except asyncio.CancelledError:
         pass
     finally:
         await scanner.stop()
+        logging.info("BLE scanner stopped.")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("程序已安全退出")
